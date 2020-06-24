@@ -1,21 +1,49 @@
 <?php
 
+namespace LaravelFormRequest;
+
+/**
+ * Class FormRequest
+ *
+ * @author yinfuyuan <yinfuyuan@gmail.com>
+ * @link https://github.com/yinfuyuan/laravel-form-request
+ */
 abstract class FormRequest extends \Illuminate\Foundation\Http\FormRequest
 {
 
+    /**
+     * The default scenario.
+     *
+     * @var string
+     */
     const SCENARIO_DEFAULT = 'default';
 
-    protected $scenario = self::SCENARIO_DEFAULT;
+    /**
+     * The scenario.
+     *
+     * @var string $scenario
+     */
+    private $scenario = self::SCENARIO_DEFAULT;
 
-    public function prepareForValidation()
+    /**
+     * The delimiter used to get the scenario.
+     *
+     * @var string $delimiter
+     */
+    protected $delimiter = 'Request';
+
+    /**
+     * Prepare the data for validation.
+     *
+     * @return void
+     */
+    public final function prepareForValidation()
     {
 
-        $router = $this->route();
+        $route = $this->route();
 
-        $isControllerAction = is_string($router->action['uses']) ? true : false;
-
-        if($isControllerAction) {
-            $controllerAction = explode('@', $router->getActionName());
+        if(!empty($route) && is_string($route->action['uses'])) {
+            $controllerAction = explode('@', $route->getActionName());
             $controller = reset($controllerAction);
             $action = end($controllerAction);
             if(!class_exists($controller)) {
@@ -26,7 +54,7 @@ abstract class FormRequest extends \Illuminate\Foundation\Http\FormRequest
                 return;
             }
             $parameters = $reflectionClass->getMethod($action)->getParameters();
-        } elseif ($router->getActionName() == 'Closure') {
+        } elseif (!empty($route) && $route->getActionName() == 'Closure') {
             $reflectionFunction = new \ReflectionFunction($this->route()->action['uses']);
             $parameters = $reflectionFunction->getParameters();
         } else {
@@ -37,7 +65,11 @@ abstract class FormRequest extends \Illuminate\Foundation\Http\FormRequest
             if($parameter->getClass() == null || $parameter->getClass()->getName() != static::class) {
                 continue;
             }
-            $requestName = explode('request', $parameter->getName());
+            if(empty($this->delimiter)) {
+                $this->setScenario($parameter->getName());
+                break;
+            }
+            $requestName = explode($this->delimiter, $parameter->getName());
             if(!empty($requestName[0])) {
                 $this->setScenario($requestName[0]);
             }
@@ -46,34 +78,44 @@ abstract class FormRequest extends \Illuminate\Foundation\Http\FormRequest
 
     }
 
-    public function authorize()
+    /**
+     * Get custom authorize for validator errors.
+     *
+     * @return array
+     */
+    public final function authorize()
     {
-        $scenarioMethod = $this->scenario . 'Authorize';
-        if(!method_exists($this, $scenarioMethod)) {
-            $this->scenario = self::SCENARIO_DEFAULT;
-            $scenarioMethod = $this->scenario . 'Authorize';
-        }
-        return $this->{$scenarioMethod}();
+        return $this->callScenarioMethod('Authorize');
     }
 
-    public function rules()
+    /**
+     * Get custom rules for validator errors.
+     *
+     * @return array
+     */
+    public final function rules()
     {
-        $scenarioMethod = $this->scenario . 'Rules';
-        if(!method_exists($this, $scenarioMethod)) {
-            $this->scenario = self::SCENARIO_DEFAULT;
-            $scenarioMethod = $this->scenario . 'Rules';
-        }
-        return $this->{$scenarioMethod}();
+        return $this->callScenarioMethod('Rules');
     }
 
-    public function messages()
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array
+     */
+    public final function messages()
     {
-        $scenarioMethod = $this->scenario . 'Messages';
-        if(!method_exists($this, $scenarioMethod)) {
-            $this->scenario = self::SCENARIO_DEFAULT;
-            $scenarioMethod = $this->scenario . 'Messages';
-        }
-        return $this->{$scenarioMethod}();
+        return $this->callScenarioMethod('Messages');
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array
+     */
+    public final function attributes()
+    {
+        return $this->callScenarioMethod('Attributes');
     }
 
     /**
@@ -124,6 +166,31 @@ abstract class FormRequest extends \Illuminate\Foundation\Http\FormRequest
     protected function defaultMessages()
     {
         return parent::messages();
+    }
+
+    /**
+     * Get the default attributes.
+     *
+     * @return array
+     */
+    protected function defaultAttributes()
+    {
+        return parent::attributes();
+    }
+
+    /**
+     * Call the scenario method.
+     *
+     * @param $method
+     * @return mixed
+     */
+    private function callScenarioMethod($method)
+    {
+        $scenarioMethod = $this->scenario . $method;
+        if(!method_exists($this, $scenarioMethod)) {
+            $scenarioMethod = self::SCENARIO_DEFAULT . $method;
+        }
+        return $this->{$scenarioMethod}();
     }
 
 }

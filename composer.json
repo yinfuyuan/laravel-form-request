@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "laravel-form-request/laravel-form-request",
   "type": "library",
   "description": "Laravel form request with scenarios",
   "keywords": ["laravel", "FormRequest", "scenarios"],
@@ -17,21 +17,21 @@
   ],
   "autoload": {
     "psr-4": {
-      "\\": "src/"
+      "LaravelFormRequest\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "\\Tests\\": "tests/"
+      "LaravelFormRequest\\Tests\\": "tests/"
     }
   },
   "require": {
-    "php": ">=5.6",
     "laravel/framework": ">=5.5"
   },
   "require-dev": {
     "phpunit/phpunit": "^7",
     "squizlabs/php_codesniffer": "1.*",
-    "vimeo/psalm": "^3.8"
+    "vimeo/psalm": "^3.8",
+    "mockery/mockery": "^1.3.1"
   }
 }
