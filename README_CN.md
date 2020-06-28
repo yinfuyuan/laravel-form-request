@@ -15,7 +15,7 @@
     
 ## 文档
 
-* ### 表单请求基类 [源码](https://github.com/yinfuyuan/laravel-form-request/blob/master/src/FormRequest.php) [测试用例](https://github.com/yinfuyuan/laravel-form-request/blob/master/tests/FormRequestTest.php)
+### 表单请求基类 [源码](https://github.com/yinfuyuan/laravel-form-request/blob/master/src/FormRequest.php) [测试用例](https://github.com/yinfuyuan/laravel-form-request/blob/master/tests/FormRequestTest.php)
 
 表单请求基类是抽象类，不能直接实例化使用，所有需要用到场景的请求类都需要继承该类。
 

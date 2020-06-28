@@ -14,7 +14,7 @@ So I started to implement, thinking that it would be easy to get the instantiate
     
 ## Document
 
-* ### FormRequest [src](https://github.com/yinfuyuan/laravel-form-request/blob/master/src/FormRequest.php) [tests](https://github.com/yinfuyuan/laravel-form-request/blob/master/tests/FormRequestTest.php)
+### FormRequest [src](https://github.com/yinfuyuan/laravel-form-request/blob/master/src/FormRequest.php) [tests](https://github.com/yinfuyuan/laravel-form-request/blob/master/tests/FormRequestTest.php)
 
 The form request base class is abstract and cannot be instantiated directly. All request classes that need to use the scenario need to inherit from it.
 
