@@ -24,6 +24,7 @@
 * rules()
 * messages()
 * attributes()
+
 表单请求基类为上述方法使用默认场景提供了下面的重写方法，需要继承后重写自己的规则。
 * defaultAuthorize()
 * defaultRules()
