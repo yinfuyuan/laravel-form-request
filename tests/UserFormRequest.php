@@ -9,45 +9,39 @@ class UserFormRequest extends FormRequest
 
     public function defaultRules()
     {
-
+        return [];
     }
 
     public function defaultMessages()
     {
-
+        return [];
     }
 
     public function indexRules()
     {
-
+        return [
+            'name' => 'required',
+        ];
     }
 
     public function indexMessages()
     {
-
-    }
-
-    public function createRules()
-    {
-
-    }
-
-    public function createMessages()
-    {
-
+        return [
+            'name.required' => 'The name field is required in index scenario.',
+        ];
     }
 
     public function closureRules()
     {
         return [
-            'scenario' => 'required',
+            'name' => 'required',
         ];
     }
 
     public function closureMessages()
     {
         return [
-            'scenario.required' => 'You use closure scenario',
+            'name.required' => 'The name field is required in closure scenario.',
         ];
     }
 
